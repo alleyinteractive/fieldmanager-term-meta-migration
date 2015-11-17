@@ -156,6 +156,16 @@ class Fieldmanager_Term_Meta_Migration_CLI extends WP_CLI_Command {
 
 		// Print a success message
 		WP_CLI::success( "Process complete!" );
+
+		if ( ! $dry_run ) {
+			WP_CLI::line( "\n" );
+			WP_CLI::line( "You're almost done! To use the new term meta, you need to update Fieldmanager, then update your code accordingly:" );
+			WP_CLI::line( "- Replace any call to Fieldmanager_Field::add_term_form() with Fieldmanager_Field::add_term_meta_box()." );
+			WP_CLI::line( "- You need to update the arguments anywhere you're instantiating Fieldmanager_Context_Term directly." );
+			WP_CLI::line( "See https://github.com/alleyinteractive/wordpress-fieldmanager/issues/400 for details." );
+			WP_CLI::line( "Happy coding!" );
+			WP_CLI::line( "\n" );
+		}
 	}
 
 	/**
