@@ -169,6 +169,46 @@ class Fieldmanager_Term_Meta_Migration_CLI extends WP_CLI_Command {
 	}
 
 	/**
+	 * Delete all FM Term Meta posts. This is helpful to follow
+	 * migrate_term_meta if the --destructive flag was not used.
+	 *
+	 * ## OPTIONS
+	 *
+	 * [--dry-run]
+	 * : If present, no updates will be made.
+	 *
+	 * [--verbose]
+	 * : If present, script will output additional details.
+	 *
+	 * ## EXAMPLES
+	 *
+	 *     wp fm-term-meta delete_fm_term_meta_posts
+	 *
+	 * @synopsis [--dry-run] [--verbose]
+	 */
+	public function delete_fm_term_meta_posts( $args, $assoc_args ) {
+		$dry_run = ! empty( $assoc_args['dry-run'] );
+		$verbose = ! empty( $assoc_args['verbose'] );
+		WP_CLI::line( "Starting delete_fm_term_meta_posts" );
+		if ( $dry_run ) {
+			WP_CLI::warning( 'THIS IS A DRY RUN' );
+		}
+
+		$terms = $this->get_terms_with_fm_term_meta();
+		foreach ( $terms as $term ) {
+			if ( $verbose || $dry_run ) {
+				WP_CLI::line( "Deleting post ID {$term->post_id} ({$term->post_name})" );
+			}
+			if ( ! $dry_run ) {
+				wp_delete_post( $term->post_id, true );
+			}
+		}
+
+		// Print a success message
+		WP_CLI::success( "Process complete!" );
+	}
+
+	/**
 	 * Get all the term meta posts in the database.
 	 *
 	 * @param bool $force_update If true, forces DB query. Otherwise, the values
